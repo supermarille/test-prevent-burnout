@@ -47,16 +47,11 @@ def get_stats(repo: Repo) -> defaultdict[Any, defaultdict[Any, int]]:
         if is_weekend(commit.committed_datetime) or is_off_hours(
             commit.committed_datetime
         ):
-            # print(f"Commit : {c.committed_datetime} : {c.summary} by {c.author}")
             name_stats[normalized_name]["off_work"] += 1
-            name_stats[normalized_name]["rate"] = round(
-                name_stats[normalized_name]["off_work"]
-                / name_stats[normalized_name]["total"]
-                * 100
-            )
 
-    # for name, stats in name_stats.items():
-    #     print(f"{name}: {stats['rate']}% ({stats['off_work']}/{stats['total']})")
+    for name, stats in name_stats.items():
+        name_stats[name]["rate"] = round(stats["off_work"] / stats["total"] * 100)
+
     return name_stats
 
 
@@ -66,5 +61,5 @@ if __name__ == "__main__":
 
     repo = init(repo_url, local_repo_path)
     stats = get_stats(repo)
-    sorted_by_name(stats)
+    # sorted_by_name(stats)
     clean(local_repo_path)
