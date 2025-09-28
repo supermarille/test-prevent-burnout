@@ -1,7 +1,6 @@
 import os.path
 import shutil
 from datetime import datetime
-from typing import Any
 from unidecode import unidecode
 from git import Repo
 from collections import defaultdict
@@ -16,6 +15,12 @@ def init(repo_url: str, local_repo_path: str) -> Repo:
         return Repo.init(local_repo_path)
 
 
+# Delete cloned repository
+def clean(local_repo_path: str):
+    if os.path.exists(local_repo_path):
+        shutil.rmtree(local_repo_path)
+
+
 def is_weekend(date: datetime) -> bool:
     return date.weekday() > 4
 
@@ -24,7 +29,7 @@ def is_off_hours(date: datetime) -> bool:
     return 8 >= date.hour >= 20
 
 
-def sorted_by_name(name_stats: defaultdict[Any, defaultdict[Any, int]]):
+def print_sorted_by_name(name_stats: dict[str, defaultdict[str, int]]):
     sorted_names = sorted(name_stats.keys())
     for name in sorted_names:
         print(
@@ -32,17 +37,24 @@ def sorted_by_name(name_stats: defaultdict[Any, defaultdict[Any, int]]):
         )
 
 
-# Delete cloned repository
-def clean(local_repo_path: str):
-    if os.path.exists(local_repo_path):
-        shutil.rmtree(local_repo_path)
+"""
+    Sort by decreasing rate order when applicable and the rest by reversed name order.
+"""
+def print_sorted_by_rate(name_stats: dict[str, defaultdict[str, int]]):
+    s = sorted(name_stats.items(), key=lambda x: (x[1]["rate"], x[0]), reverse=True)
+    for item in s:
+        print(
+            f"{item[0]} : {item[1]['rate']}% ({item[1]['off_work']}/{item[1]['total']})"
+        )
 
 
-def get_stats(repo: Repo) -> defaultdict[Any, defaultdict[Any, int]]:
+def get_stats(repo: Repo) -> dict[str, defaultdict[str, int]]:
     commits = repo.iter_commits()
-    name_stats = defaultdict(lambda: defaultdict(int))
+    name_stats: dict[str, defaultdict[str, int]] = {}
     for commit in commits:
         normalized_name = unidecode(commit.author.name.upper())
+        if normalized_name not in name_stats.keys():
+            name_stats[normalized_name] = defaultdict(int)
         name_stats[normalized_name]["total"] += 1
         if is_weekend(commit.committed_datetime) or is_off_hours(
             commit.committed_datetime
@@ -61,5 +73,6 @@ if __name__ == "__main__":
 
     repo = init(repo_url, local_repo_path)
     stats = get_stats(repo)
-    # sorted_by_name(stats)
+    # print_sorted_by_name(stats)
+    print_sorted_by_rate(stats)
     clean(local_repo_path)
