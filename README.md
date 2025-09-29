@@ -57,8 +57,9 @@ Je n'ai pas trouvé de moyen simple de faire le script sans avoir à cloner le r
 J'ai navigué un peu dans Passerelle pour savoir à combien d'auteur·ices on doit s'attendre (une dizaine).
 Tous les commits ont l'air de bien figurer dans `main`, je n'ai pas trouvé de cas de squash. 
 
-### 3. Ecrire 
+### 3. Ecrire (5h30)
 J'ai créé ma première branche et j'ai commencé à écrire le code, en explorant un peu les possibilités de GitPython.
+La méthode `iter_commits` de GitPython facilite la tâche. Je normalise les noms pour limiter les doublons. 
 Je me lance dans la construction d'un dictionnaire qui contient les infos qu'on cherche :
 ```
 {
@@ -73,10 +74,14 @@ Je me lance dans la construction d'un dictionnaire qui contient les infos qu'on 
 Je laisse les méthodes `is_weekend` et `is_off_hours` séparées à la fois pour la lisibilité du code et à la fois pour 
 laisser la possibilité de faire plus de statistiques par la suite si on le souhaite.
 
+Une fois que j'ai les résultats voulus, il me reste un peu de temps alors j'ajoute des options pour le tri (alphabétique
+ou pas taux). J'ajoute aussi des options sur les dates (7 derniers jours ou personnalisé). Par défaut, tous les commits
+sont parcourus.
+
 ## Améliorations possibles
-- Sur une période de temps donné
+- [OK] Sur une période de temps donné
 - Passer en option l'url du repo
-- Laisser le choix entre le tri alphabétique et le classement par taux ; l'usage est la prévention du burnout, un
+- [OK] Laisser le choix entre le tri alphabétique et le classement par taux ; l'usage est la prévention du burnout, un
 classement peut paraître maladroit
 - Ajouter des tests
 - Trouver un moyen de faire ce rapport sans cloner le repo
@@ -86,5 +91,5 @@ classement peut paraître maladroit
 ### Noms en double
 Des noms ont l'air d'être en double, mais il y a peut-être vraiment plusieurs Agate ou Serghei.  
 
-### Réécriture de l'historique Git
-Il est possible de changer la date et l'heure des commits (avec `--amend`).
+### Fiabilité : réécriture de l'historique Git
+Les auteur·ices peuvent changer la date et l'heure des commits (avec `--amend`).
